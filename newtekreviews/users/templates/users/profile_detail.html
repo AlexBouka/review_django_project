@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'users/css/profile.css' %}" />
+{% endblock %}
+
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block content %}
+
+<section class="profile">
+    <div class="container profile__container frame">
+        <h2 class="profile__title">{{ request.user.username }}</h2>
+        <div class="profile__wrapper flex">
+            <div class="profile__avatar-wrapper">
+                {% if profile.profile_photo %}
+                <img class="profile__avatar" src="{{ profile.profile_photo.url }}" alt="{{ request.user.username }}'s avatar">
+                {% else %}
+                <img class="profile__avatar" src="{{ profile.profile_photo.url }}" src="{{ profile.profile_photo }}" alt="Default avatar">
+                {% endif %}
+            </div>
+            <div class="profile__info-wrapper">
+                <p>Username: {{ user.username }}</p>
+                <p>First name: {{ user.first_name }}</p>
+                <p>Last name: {{ user.last_name }}</p>
+                <p>Email: {{ user.email }}</p>
+            </div>
+            {% if request.user == user %}
+            <div class="profile__actions-wrapper flex">
+                <a class="profile__edit profile-link link-reset" href="{% url 'users:edit-profile' %}">Edit profile</a>
+                <a class="profile__password-change profile-link link-reset" href="{% url 'users:password_change' %}">Change password</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

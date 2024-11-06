@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'users/css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+<section class="login">
+    <div class="container login__container">
+        <h1 class="login__title">Login</h1>
+        <div class="login__wrapper frame">
+            <form class="login__form" action="" method="post">
+                {% csrf_token %}
+                {{ form.as_div }}
+                <input class="form__submit btn-reset" type="submit" value="Login">
+            </form>
+            <p class="login__register-text">
+                Don't have an account? 
+                <a class="login__register-link" href="{% url 'users:register' %}">Sign Up</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<section class="category">
+    <div class="container category__container">
+        <div class="category__wrapper">
+            <h1 class="category__title">{{ category.name }}</h1>
+            <ul class="category__list list-reset">
+                {% for review in category.reviews.all %}
+                <li class="category__item">
+                    <a href="{% url 'review:review' review.slug %}" class="category__item-link">{{ review.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

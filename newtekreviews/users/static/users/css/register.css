@@ -1,0 +1,60 @@
+p {
+    margin: 0;
+}
+
+.register__container {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 400px;
+}
+
+.register__form {
+    padding: 20px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+.register__form:hover {
+    box-shadow: 5px 5px 5px 5px rgba(1, 95, 158, 0.2);
+}
+
+.login__form-input {
+    padding: 8px 10px;
+    min-width: 250px;
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid var(--form-input-border);
+    margin-bottom: 15px;
+}
+
+.login__form-input:hover {
+    background-color: var(--text-input-on-hover);
+    border: 1px solid var(--main-color);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition-duration: 0.3s;
+}
+
+.login__form-input::placeholder {
+    color: var(--grey-text);
+    font-size: 14px;
+}
+
+.form__submit {
+    margin: 0 auto;
+    padding: 10px 20px;
+    border-radius: 3px;
+    background-color: var(--main-color);
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+}
+
+.form__submit:hover {
+    background-color: rgb(50, 137, 196);
+    transition: background-color 0.3s ease;
+    transition-duration: 0.3s;
+}
+
+.form__submit:active {
+    background-color: var(--main-color-active);
+}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% comment %} {% block title %}All Reviews{% endblock %} {% endcomment %}
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'review/css/reviews.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<section class="reviews">
+    <div class="container reviews__container">
+        <div class="reviews__title-wrapper flex">
+            <h2 class="reviews__title">All Reviews</h2>
+            <p class="reviews__count">Total: {{ reviews_count }}</p>
+        </div>
+        {% if reviews %}
+        <ul class="reviews__list list-reset">
+            {% for review in reviews %}
+            <li class="reviews__item">
+                <div class="reviews__item-title-wrapper">
+                    <h3 class="reviews__item-title">{{ review.title }}</h3>
+                    <a href="{{ review.category.get_absolute_url }}" class="reviews__item-category">{{ review.category.name }}</a>
+                </div>
+                <div class="reviews__item-wrapper">
+                    <div class="reviews__item-left">
+                        <p class="reviews__item-description">{{ review.description|truncatewords:40 }}</p>
+                        <p class="reviews__item-author">{{ review.author.username }}</p>
+                        <span class="reviews__item-date">{{ review.time_created|date:"d.m.Y" }}</span>
+                        <a class="reviews__item-link" href="{{ review.get_absolute_url }}">Read more</a>
+                    </div>
+                    <div class="reviews__item-right">
+                        {% if review.main_image %}
+                        <img class="reviews__item-image" src="{{ review.main_image.url }}" alt="{{ review.title }}">
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No reviews found</p>
+        {% endif %}
+    </div>
+</section>
+<nav class="pagination">
+    <ul class="pagination__list flex frame list-reset">
+        {% if page_obj.has_previous %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--prev" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--active" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+        </li>
+        {% if page_obj.has_next %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--next" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

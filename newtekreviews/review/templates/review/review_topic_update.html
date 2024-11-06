@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Topic{% endblock %}
+
+{% block content %}
+
+<section class="edit-topic">
+    <div class="container edit-topic__container">
+        <h1 class="edit-topic__title">Edit Topic</h1>
+        <form action="" method="post">
+            {% csrf_token %} 
+            {{ form.as_div }}
+            <input class="form__submit btn-reset" type="submit" value="Edit">
+        </form>
+    </div>
+</section>    
+
+{% endblock %}

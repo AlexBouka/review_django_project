@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Review{% endblock %}
+
+{% comment %} {% block content %}
+
+<section class="create-review">
+    <div class="container create-review__container">
+        <h1 class="create-review__title">Create new review</h1>
+        <form action="" method="post", enctype="multipart/form-data">
+            {% csrf_token %} 
+            {{ form.as_div }}
+            <input class="form__submit btn-reset" type="submit" value="Create">
+        </form>
+    </div>
+</section>
+
+{% endblock %} {% endcomment %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ review_topic_formset.management_form }}
+    {% for form in review_topic_formset %}
+        {{ form.as_p }}
+    {% endfor %}
+    <button type="submit">Create review</button>
+</form>
+
+{% endblock %}

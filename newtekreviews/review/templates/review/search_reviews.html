@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if searched %}
+    <h1>You searched for "{{ searched }}"</h1>
+
+    {% for review in reviews %}
+        <h2><a href="{% url 'review:review' review.slug %}">{{ review.title }}</a></h2>
+    {% endfor %}
+{% else %}
+    <h1>Please provide a keyword to search for.</h1>
+{% endif %}
+{% endblock %}

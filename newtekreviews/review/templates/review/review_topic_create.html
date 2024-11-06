@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Topic{% endblock %}
+
+{% block content %}
+
+<section class="create-topic">
+    <div class="container create-topic__container">
+        <h1 class="create-topic__title">Create new topic</h1>
+        <form action="" method="post">
+            {% csrf_token %} 
+            {{ form.as_div }}
+            <input class="form__submit btn-reset" type="submit" value="Create">
+        </form>
+    </div>
+</section>
+
+{% endblock %}

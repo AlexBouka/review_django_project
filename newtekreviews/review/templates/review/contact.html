@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<section class="contact">
+    <div class="container contact__container">
+        <div class="contact__wrapper">
+            <h1 class="contact__title">Contact Us</h1>
+            <p class="contact__text">
+                If you have any questions or suggestions, please feel free to contact us. We are always happy to help.
+            </p>
+            <form class="contact__form" action="" method="post">
+                {% csrf_token %}
+                {{ form.as_div }}
+                <input class="form__submit btn-reset" type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

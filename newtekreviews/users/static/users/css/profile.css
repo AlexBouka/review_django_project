@@ -1,0 +1,47 @@
+.profile__container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.profile__title {
+    margin: 0;
+}
+
+.profile__wrapper {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile__avatar-wrapper, .profile__info-wrapper {
+    margin-right: 30px;
+}
+
+.profile__avatar {
+    max-width: 150px;
+}
+
+.profile__info-wrapper {
+    padding: 10px 20px;
+}
+
+.profile__actions-wrapper {
+    flex-direction: column;
+}
+
+.profile-link {
+    margin-bottom: 10px;
+    padding: 10px 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: rgb(1, 95, 158);
+    transition: background-color 0.3s ease;
+}
+
+.profile-link:hover {
+    background-color: rgb(50, 137, 196);
+}
+
+.profile-link:last-child {
+    margin-bottom: 0;
+}

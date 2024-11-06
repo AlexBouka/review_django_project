@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<section class="profile">
+    <div class="container profile__container">
+        <div class="profile__wrapper">
+            <h1 class="profile__title">Profile</h1>
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_ul }}
+                <input type="submit" value="Update">
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,108 @@
+.review__container {
+    padding-top: 30px;
+    padding-bottom: 60px;
+}
+
+.review__wrapper {
+    /* border: 1px solid var(--grey-text); */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px 5px rgba(206, 206, 206, 0.35);
+}
+
+.review__title-wrapper {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(181, 216, 240);
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid var(--grey-text);
+}
+
+.review__title {
+    margin: 0;
+    font-size: 24px;
+    color: var(--main-text-color);
+}
+
+.review__info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.review__author {
+    margin: 0;
+}
+
+.review__date {
+    font-size: 12px;
+    color: var(--grey-text);
+}
+
+.review__category {
+    padding: 10px;
+    border-radius: 3px;
+    background-color: var(--main-color);
+    font-size: 18px;
+    color: white;
+}
+
+.review__descr-wrapper {
+    padding: 20px;
+    display: flex;
+}
+
+.review__description {
+    margin: 0;
+    margin-bottom: 20px;
+    margin-right: 100px;
+    line-height: 20px;
+    color: var(--main-text-color);
+}
+
+.topics__wrapper {
+    padding: 20px;
+}
+
+.topic__title, .topic__content {
+    color: var(--main-text-color);
+}
+
+.review__topic {
+    margin-bottom: 30px;
+    border-right: 2px solid var(--main-color);
+}
+
+.review__topic:last-child {
+    margin-bottom: 0;
+}
+
+.topic__edit, .topic__delete {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: var(--grey-text);
+    font-size: 14px;
+    color: white;
+}
+
+.review__actions-wrapper {
+    padding: 20px;
+    padding-top: 10px;
+    display: flex;
+    background-color: #e0e0e0;
+    border-top: 1px solid var(--grey-text);
+    border-radius: 0 0 10px 10px;
+}
+
+.actions__edit {
+    display: block;
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--main-color);
+    font-size: 14px;
+    color: white;
+}

@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-grid.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'review/css/style.css' %}" />
+
+    {% block extra_head %}{% endblock %}
+
+    <title>{% block title %}{{ page_title }}{% endblock %}</title>
+</head>
+
+<body>
+
+{% block nav %}
+
+    <!-- Base Header -->
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__logo-wrapper">
+                <a href="{% url 'review:main' %}">
+                    <img class="header__logo-img" src="{% static 'review/img/header-logo.png' %}" alt="NewTekReviews Logo">
+                </a>
+            </div>
+            <nav class="header__nav nav">
+                <ul class="nav__list list-reset">
+                    <li class="nav__item">
+                        <a class="nav__item-link" href="{% url 'review:all_reviews' %}">Reviews</a>
+                    </li>
+                    <li class="nav__item">
+                        <a class="nav__item-link" href="{% url 'review:categories' %}">Categories</a>
+                    </li>
+                    <li class="nav__item">
+                        <a class="nav__item-link" href="{% url 'review:about' %}">About</a>
+                    </li>
+                    <li class="nav__item">
+                        <a class="nav__item-link" href="{% url 'review:contact' %}">Contact Us</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header__search-wrapper">
+                <form method="POST" class="header__search-form flex" action="{% url 'review:search' %}">
+                    {% csrf_token %}
+                    <input type="text" name="searched" class="header__search-input" placeholder="Search">
+                    <button class="header__search-btn btn-reset" type="submit" aria-label="Search">
+                        <svg class="header__search-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21L16.65 16.65" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="header__profile-dropdown profile-dropdown">
+                <button class="header__profile-btn btn-reset">{{ request.user.username }}</button>
+                <div class="profile-dropdown__content">
+                    <a class="profile-dropdown__link" href="{% url 'users:profile' %}">Profile</a>
+                    <form action="{% url 'users:logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="profile-dropdown__link btn-reset" type="submit">Logout</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <a class="header__login-link link-reset" href="{% url 'users:login' %}">Login</a>
+            {% endif %}
+        </div>
+    </header>
+    <!-- End of Base Header -->
+    
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

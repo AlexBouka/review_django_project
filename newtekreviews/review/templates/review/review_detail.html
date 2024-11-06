@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'review/css/review.css' %}" />
+{% endblock %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<section class="review">
+    <div class="container review__container">
+        <div class="review__wrapper">
+            <div class="review__title-wrapper">
+                <h2 class="review__title">{{ review.title }}</h2>
+                <div class="review__info-wrapper">
+                    <p class="review__author">{{ review.author }}</p>
+                    <span class="review__date">{{ review.time_created|date:"d.m.Y" }}</span>
+                    <a class="review__category" href="#">{{ review.category.name }}</a>
+                </div>
+            </div>
+            <div class="review__descr-wrapper">
+                <p class="review__description">{{ review.description }}</p>
+                <div class="review__main-image-wrapper">
+                    {% if review.main_image %}
+                    <img class="review__main-image" src="{{ review.main_image.url }}" alt="{{ review.title }}">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Review Topics -->
+
+            {% if review.topics %}
+            <div class="topics__wrapper">
+                <ul class="review__topics list-reset">
+                    {% for topic in review.topics.all %}
+                    <li class="review__topic">
+                        <h3 class="topic__title">{{ topic.review_topic_title }}</h3>
+                        <p class="topic__content">{{ topic.text_content }}</p>
+                        {% if request.user == review.author or request.user.is_superuser %}
+                        <a class="topic__edit" href="{% url 'review:update_review_topic' topic_slug=topic.slug %}">Edit topic</a>
+                        <a class="topic__delete" href="{% url 'review:delete_review_topic' topic_slug=topic.slug %}">Delete topic</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Review Actions -->
+
+            {% if request.user == review.author or request.user.is_superuser %}
+            <div class="review__actions-wrapper">
+                <a class="actions__edit" href="{% url 'review:review_update' review.slug %}">Edit {{ review.title }}</a>
+                <a class="actions__edit" href="{% url 'review:review_delete' review.slug %}">Delete {{ review.title }}</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
