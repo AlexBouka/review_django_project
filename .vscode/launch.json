@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [      
+        {
+            "name": "Python Debugger: Django",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "newtekreviews\\manage.py",
+            "args": ["runserver"],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "GetAllReviewsTestCase",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "newtekreviews\\manage.py",
+            "args": ["test", "review.tests.GetAllReviewsTestCase"],
+            "django": true,
+            "justMyCode": true
+        }
+    ]
+}
