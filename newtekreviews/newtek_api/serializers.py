@@ -58,7 +58,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'slug', 'time_created', 'time_updated',
-            'is_published', 'author', 'topics',
+            'is_published', 'author',
         ]
 
     def create(self, validated_data: dict):
@@ -79,7 +79,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         if topics_data:
             for topic_data in topics_data:
-                slug = create_slug(review.title, topic_data['review_topic_title'])
+                slug = create_slug(
+                    review.title, topic_data['review_topic_title'])
                 review_topic = ReviewTopic.objects.create(
                     review=review, slug=slug,
                     **topic_data)

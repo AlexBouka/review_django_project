@@ -11,22 +11,31 @@
 <section class="reviews">
     <div class="container reviews__container">
         <div class="reviews__title-wrapper flex">
-            <h2 class="reviews__title">All Reviews</h2>
-            <p class="reviews__count">Total: {{ reviews_count }}</p>
+            <h2 class="reviews__title">{{ info_heading }}</h2>
+            <a class="reviews__add-link" href="{% url 'review:review_create' %}">New review</a>
+            <p class="reviews__count">Total: {{ filtered_reviews_count }}</p>
         </div>
+        <form method="get" action="." class="reviews__filter-form frame flex">
+            <div class="filter-form__input-wrapper flex">
+                <input type="text" name="title" placeholder="Review title" class="filter-form__input filter-form__title" value="">
+                <input type="text" name="description" placeholder="Description" class="filter-form__input filter-form__description" value="">
+                <input type="date" name="time_created" class="filter-form__input filter-form__time_created" value="{{ filter.form.time_created.value }}" />
+            </div>
+            <button type="submit" class="filter-form__submit btn-reset">Filter</button>
+        </form>
         {% if reviews %}
         <ul class="reviews__list list-reset">
             {% for review in reviews %}
             <li class="reviews__item">
                 <div class="reviews__item-title-wrapper">
-                    <h3 class="reviews__item-title">{{ review.title }}</h3>
+                    <a href="{{ review.get_absolute_url }}" class="reviews__item-title-link"><h3 class="reviews__item-title">{{ review.title }}</h3></a>
                     <a href="{{ review.category.get_absolute_url }}" class="reviews__item-category">{{ review.category.name }}</a>
                 </div>
                 <div class="reviews__item-wrapper">
                     <div class="reviews__item-left">
                         <p class="reviews__item-description">{{ review.description|truncatewords:40 }}</p>
                         <p class="reviews__item-author">{{ review.author.username }}</p>
-                        <span class="reviews__item-date">{{ review.time_created|date:"d.m.Y" }}</span>
+                        <span class="reviews__item-date">{{ review.time_created|date:"Y.m.d" }}</span>
                         <a class="reviews__item-link" href="{{ review.get_absolute_url }}">Read more</a>
                     </div>
                     <div class="reviews__item-right">

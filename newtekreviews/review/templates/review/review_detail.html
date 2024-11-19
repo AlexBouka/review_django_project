@@ -16,7 +16,7 @@
                 <h2 class="review__title">{{ review.title }}</h2>
                 <div class="review__info-wrapper">
                     <p class="review__author">{{ review.author }}</p>
-                    <span class="review__date">{{ review.time_created|date:"d.m.Y" }}</span>
+                    <span class="review__date">{{ review.time_created|date:"Y.m.d" }}</span>
                     <a class="review__category" href="#">{{ review.category.name }}</a>
                 </div>
             </div>

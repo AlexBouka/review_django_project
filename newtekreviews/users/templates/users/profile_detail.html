@@ -11,6 +11,7 @@
 
 <section class="profile">
     <div class="container profile__container frame">
+        {% if profile %}
         <h2 class="profile__title">{{ request.user.username }}</h2>
         <div class="profile__wrapper flex">
             <div class="profile__avatar-wrapper">
@@ -26,6 +27,19 @@
                 <p>Last name: {{ user.last_name }}</p>
                 <p>Email: {{ user.email }}</p>
             </div>
+            <div class="profile__social-wrapper">
+                <a href="{{ profile.social_facebook }}" class="profile__social-link social_facebook">
+                    Facebook</a>
+                <a href="{{ profile.social_twitter }}" class="profile__social-link social_twitter">
+                    Twitter</a>
+                <a href="{{ profile.social_instagram }}" class="profile__social-link social_instagram">
+                    Instagram</a>
+                <a href="{{ profile.social_youtube }}" class="profile__social-link social_youtube">
+                    YouTube</a>
+                <a href="{{ profile.social_website }}" class="profile__social-link social_website">
+                    Website
+                </a>
+            </div>
             {% if request.user == user %}
             <div class="profile__actions-wrapper flex">
                 <a class="profile__edit profile-link link-reset" href="{% url 'users:edit-profile' %}">Edit profile</a>
@@ -33,6 +47,9 @@
             </div>
             {% endif %}
         </div>
+        {% else %}
+        <p>No profile found for this user.</p>
+        {% endif %}
     </div>
 </section>
 

@@ -1,0 +1,27 @@
+version: "3.12"
+
+services:
+  db:
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=newtekreviews_db
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/newtekreviews
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+    

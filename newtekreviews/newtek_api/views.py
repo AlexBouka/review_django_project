@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authentication import (
     TokenAuthentication, SessionAuthentication)
+from django_filters import rest_framework as filters
+
+from review.filters import ReviewFilter
 
 
 from .permissions import IsAuthorOrReadOnly, IsReviewTopicAuthorOrReadOnly
@@ -23,6 +26,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     lookup_url_kwarg = 'review_slug'
     authentication_classes = (TokenAuthentication, SessionAuthentication)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ReviewFilter
     pagination_class = ReviewAPIListPaginator
 
     def get_permissions(self):

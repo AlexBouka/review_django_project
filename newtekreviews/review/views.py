@@ -19,6 +19,7 @@ from .forms import (
     AddReviewForm, ContactForm, AddCategoryForm,
     AddReviewTopicForm, EditReviewTopicForm,
     ReviewTopicFormSet, UpdateReviewTopicFormSet)
+from .filters import ReviewFilter, CategoryFilter
 
 logger = logging.getLogger(__name__)
 
@@ -58,34 +59,87 @@ def search_reviews(request):
 class ReviewListView(DataMixin, ListView):
     model = Review
     page_title = 'All Reviews'
+    info_heading = 'Reviews'
     context_object_name = 'reviews'
     template_name = 'review/review_list.html'
     paginate_by = 5
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context['reviews_count'] = Review.published.count()
-        return context
-
     def get_queryset(self):
         """
-        Returns a queryset of all reviews that are published. The queryset is
-        cached for 60 seconds to reduce the number of database queries.
+        Retrieves all published reviews from the cache or database.
+
+        If the reviews are not in the cache, it retrieves all published reviews
+        from the database and caches them.
+
+        The reviews are filtered using the ReviewFilter class, which filters
+        the reviews based on the GET parameters passed in the request.
 
         Returns:
-            QuerySet: A queryset of all published reviews.
+            QuerySet: A queryset of all published reviews filtered by the GET
+            parameters.
         """
+
         review_list = cache.get('all_reviews')
         if not review_list:
             review_list = Review.published.all().select_related(
                 'category').select_related(
                     'author')
             cache.set('all_reviews', review_list, 60)
+
+        self.filterset = ReviewFilter(self.request.GET, queryset=review_list)
+
         logger.info('Retrieving all reviews that are published...')
-        return review_list
+
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Retrieves the context data needed to render the review list page.
+
+        The context includes the count of all published reviews, the count of
+        filtered reviews, the ReviewFilter instance, and the filtered data.
+
+        If the request contains GET parameters, it updates the info_heading
+        attribute of the view instance with the appropriate text.
+
+        Returns:
+            dict[str, Any]: The context data needed to render the review list page.
+        """
+        context = super().get_context_data(**kwargs)
+        context['reviews_count'] = Review.published.count()
+        context['filtered_reviews_count'] = len(self.filterset.qs)
+        context['filter'] = self.filterset
+
+        filter_data = self.request.GET.dict()
+        context['filter_data'] = filter_data
+
+        info_parts = []
+
+        if filter_data:
+            logger.info(f'Retrieving filtered reviews: {filter_data}')
+
+            page = filter_data.get('page')
+            title = filter_data.get('title', '')
+            description = filter_data.get('description', '')
+            time_created = filter_data.get('time_created', '')
+
+            if page:
+                self.info_heading = f'All reviews {page} page'
+            if title:
+                info_parts.append(f"title: {title}")
+            if description:
+                info_parts.append(f"description containing: {description}")
+            if time_created:
+                info_parts.append(f"creation date: {time_created}")
+
+        self.info_heading = 'Reviews by ' + ", ".join(info_parts) \
+            if info_parts else "All Reviews"
+        context['info_heading'] = self.info_heading
+
+        return context
+
 
 # Review CRUD views
-
 
 class ReviewDetailView(DataMixin, DetailView):
     model = Review
@@ -331,11 +385,50 @@ class ReviewTopicDeleteView(
 class CategoryListView(DataMixin, ListView):
     model = Category
     page_title = 'Categories'
+    info_heading = 'Categories'
     context_object_name = 'categories'
     template_name = 'review/category_list.html'
+    paginate_by = 10
 
     def get_queryset(self):
-        return Category.objects.prefetch_related('reviews').all()
+        """
+        Retrieves all published categories from the cache or database.
+
+        If the categories are not in the cache, it retrieves all published
+        categories from the database and caches them.
+
+        The categories are filtered using the CategoryFilter class, which
+        filters the categories based on the GET parameters passed in the
+        request.
+
+        Returns:
+            QuerySet: A queryset of all published categories filtered by the
+            GET parameters.
+        """
+        category_list = cache.get('categories')
+        if category_list is None:
+            category_list = Category.objects.prefetch_related('reviews').all()
+            cache.set('categories', category_list, timeout=60)
+        self.filterset = CategoryFilter(
+            self.request.GET, queryset=category_list)
+
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        filter_data = self.request.GET.dict()
+        context['filter_data'] = filter_data
+
+        page = filter_data.get('page')
+        name = filter_data.get('name', '')
+        if page:
+            self.info_heading = 'Categories'
+        if name:
+            self.info_heading = 'Searched for ' + filter_data['name'] \
+                if filter_data else self.info_heading
+        context['info_heading'] = self.info_heading
+
+        return context
 
 
 class CategoryDetailView(DataMixin, DetailView):

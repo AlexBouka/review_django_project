@@ -17,12 +17,31 @@ class UserRegisterTestCase(TestCase):
         }
 
     def test_form_registration_get(self):
+        """
+        Tests the GET request to the user registration page.
+
+        This test verifies that the registration page is accessible and uses
+        the correct template. It makes a GET request to the registration URL
+        and checks that the response status code is 200 (OK) and that the
+        'users/user_registration.html' template is used in the response.
+        """
+
         path = reverse('users:register')
         response = self.client.get(path)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, 'users/user_registration.html')
 
     def test_user_registration_success(self):
+        """
+        Tests the successful registration of a new user.
+
+        This test makes a POST request to the user registration URL with valid
+        user data. It verifies that the response status code is 302 (FOUND),
+        indicating a redirect, and that the user is redirected to the login page.
+        It also checks that a new user with the given username exists in the
+        database.
+        """
+
         path = reverse('users:register')
         response = self.client.post(path, data=self.data)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -33,6 +52,16 @@ class UserRegisterTestCase(TestCase):
                 )
 
     def test_user_registration_password_error(self):
+        """
+        Tests the user registration with an invalid password.
+
+        This test makes a POST request to the user registration URL with a
+        valid username, email, and first and last name, but with different
+        passwords in the two password fields. It verifies that the response
+        status code is 200 (OK) and that the response contains an error
+        message indicating that the two password fields didn't match.
+        """
+
         self.data['password2'] = '!b12345678'
         path = reverse('users:register')
         response = self.client.post(path, data=self.data)
@@ -41,9 +70,21 @@ class UserRegisterTestCase(TestCase):
             response, 'The two password fields didn’t match.', html=False)
 
     def test_same_username_registration_error(self):
+        """
+        Tests the registration process with an already existing username.
+
+        This test creates a user with an existing username and then attempts to
+        register a new user with the same username. It verifies that the response
+        status code is 200 (OK) and that the response contains an error message
+        indicating that a user with that username already exists.
+        """
+
         self.user_model.objects.create_user(username=self.data['username'])
         path = reverse('users:register')
         response = self.client.post(path, data=self.data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertContains(
             response, 'A user with that username already exists.', html=False)
+
+    def tearDown(self):
+        pass

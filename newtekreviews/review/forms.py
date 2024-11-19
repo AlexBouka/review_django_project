@@ -44,7 +44,6 @@ class AddReviewForm(InitForm, forms.ModelForm):
             'main_image': forms.FileInput(
                 attrs={
                     'class': 'review-form__image-input file-input',
-                    'required': False
                     }
                 ),
             'is_published': forms.CheckboxInput(attrs={
@@ -100,7 +99,7 @@ class EditReviewTopicForm(forms.ModelForm):
 
 
 ReviewTopicFormSet = forms.modelformset_factory(
-    ReviewTopic, form=AddReviewTopicForm, extra=10
+    ReviewTopic, form=AddReviewTopicForm, extra=1, max_num=10
 )
 UpdateReviewTopicFormSet = forms.modelformset_factory(
     ReviewTopic, form=EditReviewTopicForm, extra=1, can_delete=True
@@ -111,7 +110,6 @@ class AddCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name', 'category_background']
-
 
 
 class ContactForm(InitForm, forms.Form):

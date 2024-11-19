@@ -20,7 +20,7 @@ from django.urls import path, re_path, include
 
 from django.contrib.sitemaps.views import sitemap
 
-from newtekreviews import settings
+from . import settings
 
 from review.sitemaps import ReviewSitemap
 
@@ -43,4 +43,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

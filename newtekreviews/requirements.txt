@@ -13,6 +13,7 @@ defusedxml==0.8.0rc2
 Django==5.0.6
 django-debug-toolbar==4.4.6
 django-extensions==3.2.3
+django-filter==24.3
 django-ranged-response==0.2.0
 django-simple-captcha==0.6.0
 django-templated-mail==1.1.1
@@ -21,9 +22,11 @@ djangorestframework-simplejwt==5.3.1
 djoser==2.2.3
 drf-spectacular==0.27.2
 executing==2.0.1
+Faker==12.0.1
 hiredis==3.0.0
 idna==3.10
 inflection==0.5.1
+iniconfig==2.0.0
 ipykernel==6.29.5
 ipython==8.26.0
 jedi==0.19.1
@@ -32,12 +35,14 @@ jsonschema-specifications==2024.10.1
 jupyter_client==8.6.3
 jupyter_core==5.7.2
 matplotlib-inline==0.1.7
+mixer==7.2.2
 nest-asyncio==1.6.0
 oauthlib==3.2.2
 packaging==24.1
 parso==0.8.4
 pillow==10.4.0
 platformdirs==4.3.6
+pluggy==1.5.0
 prompt_toolkit==3.0.47
 psutil==6.0.0
 psycopg2==2.9.10
@@ -45,10 +50,11 @@ pure-eval==0.2.2
 pycparser==2.22
 Pygments==2.18.0
 PyJWT==2.9.0
+pytest==8.3.3
+pytest-django==4.9.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python3-openid==3.2.0
-pywin32==307
 PyYAML==6.0.2
 pyzmq==26.2.0
 redis==5.1.1
@@ -64,6 +70,7 @@ sqlparse==0.5.1
 stack-data==0.6.3
 tornado==6.4.1
 traitlets==5.14.3
+typing_extensions==4.12.2
 tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.3

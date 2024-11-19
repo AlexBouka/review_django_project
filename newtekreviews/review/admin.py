@@ -10,19 +10,19 @@ from .models import Review, Category, ReviewTopic
 from .forms import CSVForm
 
 
-class ReviewCategoryFilter(admin.SimpleListFilter):
-    title = "category"
-    parameter_name = "category"
+# class ReviewCategoryFilter(admin.SimpleListFilter):
+#     title = "category"
+#     parameter_name = "category"
 
-    def lookups(self, request, model_admin):
-        return [
-            Category.objects.values_list('name', flat=True)
-        ]
+#     def lookups(self, request, model_admin):
+#         return [
+#             Category.objects.values_list('name', flat=True)
+#         ]
 
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(category__name=self.value())
-        return queryset
+#     def queryset(self, request, queryset):
+#         if self.value():
+#             return queryset.filter(category__name=self.value())
+#         return queryset
 
 
 @admin.register(Review)
@@ -35,7 +35,7 @@ class ReviewAdmin(admin.ModelAdmin):
         )
     list_display_links = ("title",)
     list_editable = ("is_published",)
-    list_filter = (ReviewCategoryFilter, "is_published", "category",)
+    list_filter = ("is_published", "category",)
     search_fields = ("title__startswith", "description",)
     prepopulated_fields = {"slug": ("title",)}
 
@@ -87,7 +87,8 @@ class ReviewAdmin(admin.ModelAdmin):
         ]
         Review.objects.bulk_create(reviews)
         self.message_user(
-            request, "Reviews successfully imported", messages.SUCCESS
+            request, f"{len(reviews)} Reviews successfully imported",
+            messages.SUCCESS
         )
 
         return redirect("..")

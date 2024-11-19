@@ -1,18 +1,120 @@
 .reviews__container {
-    padding-top: 60px;
+    padding-top: 20px;
     padding-bottom: 60px;
 }
 
 .reviews__title-wrapper {
-    justify-content: space-between;
+    padding-top: 20px;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+.reviews__item-title-link:hover .reviews__item-title {
+    color: var(--main-color);
+    transition: color 0.3 ease;
 }
 
 .reviews__title {
     margin: 0;
+    margin-right: auto;
     margin-bottom: 20px;
     padding-left: 20px;
     font-size: 32px;
     color: var(--main-text-color);
+}
+
+.reviews__add-link {
+    margin-right: 10px;
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: #f06210;
+    color: white;
+    font-size: 18px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reviews__add-link:hover {
+    background-color: #b44302;
+}
+
+.reviews__add-link:focus {
+    outline: 2px solid var(--main-color)
+}
+
+.reviews__count {
+    margin: 0;
+    margin-right: 20px;
+    padding: 20px;
+    background-color: rgb(181, 216, 240);
+    border-radius: 5px 5px 0 0;
+}
+
+.reviews__filter-form {
+    margin-bottom: 10px;
+    padding: 20px;
+    justify-content: space-between;
+    background-color: var(--main-color);
+}
+
+.filter-form__input {
+    margin-right: 10px;
+}
+
+.filter-form__input:last-child {
+    margin-right: 0;
+}
+
+.reviews__filter-form input[type="text"] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--form-input-border);
+    transition: border 0.3s ease background-color 0.3s ease;
+}
+
+.reviews__filter-form input[type="text"]:hover {
+    border: 1px solid var(--main-color);
+    background-color: var(--text-input-on-hover);
+}
+
+.reviews__filter-form input[type="text"]:focus {
+    outline: 2px solid #f06210;
+}
+
+.reviews__filter-form input[type="date"] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--form-input-border);
+    transition: border 0.3s ease background-color 0.3s ease;
+}
+
+.reviews__filter-form input[type="date"]:hover {
+    border: 1px solid var(--main-color);
+    background-color: var(--text-input-on-hover);
+}
+
+.reviews__filter-form input[type="date"]:focus {
+    outline: 2px solid #f06210;
+}
+
+.filter-form__submit {
+    padding: 5px 20px;
+    border-radius: 3px;
+    background-color: #fff;
+    color: var(--main-color);
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-form__submit:hover {
+    background-color: var(--text-input-on-hover);
+}
+
+.filter-form__submit:focus {
+    outline: 2px solid #f06210;
 }
 
 .reviews__item {
@@ -60,6 +162,10 @@
     background-color: rgb(50, 137, 196);
 }
 
+.reviews__item-category:focus {
+    outline: 2px solid #f06210;
+}
+
 .reviews__item-wrapper {
     display: flex;
     justify-content: space-between;
@@ -102,6 +208,10 @@
 
 .reviews__item-link:hover {
     background-color: rgb(50, 137, 196);
+}
+
+.reviews__item-link:focus {
+    outline: 2px solid #f06210;
 }
 
 .reviews__item-right {

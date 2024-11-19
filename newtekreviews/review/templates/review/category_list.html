@@ -11,16 +11,22 @@
 
 <section class="section categories">
     <div class="container categories__container">
-        <h1 class="categories__title">{{ page_title }}</h1>
-        <ul class="row categories__list list-reset">
+        <h1 class="categories__title">{{ info_heading }}</h1>
+        <form method="get" action="." class="categories__filter-form frame flex">
+            <input type="text" name="name" placeholder="Category name" class="filter-form__input" value="" />
+            <button type="submit" class="filter-form__submit btn-reset">Filter</button>
+        </form>
+        <ul class="categories__list list-reset">
             {% for category in categories %}
                 <li class="category__item frame">
                     <div class="category__info-wrapper">
                         <a href="{{ category.get_absolute_url }}" class="categories__item-link">{{ category.name }}</a>
                         <p class="category__item-reviews-count">{{ category.reviews.count }} reviews</p>
                         {% if request.user.is_superuser %}
-                        <a href="{% url 'review:category_update' category.slug %}" class="categories__item-edit">Edit</a>
-                        <a href="{% url 'review:category_delete' category.slug %}" class="categories__item-delete">Delete</a>
+                        <div class="categories__action-link-wrapper">
+                            <a href="{% url 'review:category_update' category.slug %}" class="categories__action-link categories__item-edit">Edit</a>
+                            <a href="{% url 'review:category_delete' category.slug %}" class="categories__action-link categories__item-delete">Delete</a>
+                        </div>
                         {% endif %}
                     </div>
                     <a href="{{ category.get_absolute_url }}" class="category__image-link">
@@ -31,5 +37,22 @@
         </ul>
     </div>
 </section>
+<nav class="pagination">
+    <ul class="pagination__list flex frame list-reset">
+        {% if page_obj.has_previous %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--prev" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--active" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+        </li>
+        {% if page_obj.has_next %}
+        <li class="pagination__item">
+            <a class="pagination__link pagination__link--next" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
 
 {% endblock %}

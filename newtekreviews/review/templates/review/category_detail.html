@@ -2,15 +2,33 @@
 
 {% block title %}{{ category.name }}{% endblock %}
 
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'review/css/category.css' %}" />
+{% endblock %}
+
 {% block content %}
 <section class="category">
     <div class="container category__container">
         <div class="category__wrapper">
             <h1 class="category__title">{{ category.name }}</h1>
-            <ul class="category__list list-reset">
+            <ul class="review__list list-reset">
                 {% for review in category.reviews.all %}
-                <li class="category__item">
-                    <a href="{% url 'review:review' review.slug %}" class="category__item-link">{{ review.title }}</a>
+                <li class="category__review-item review-item frame">
+                    <h3 class="review-item__title">{{ review.title }}</h3>
+                    <div class="reviews__item-wrapper">
+                        <div class="reviews__item-left">
+                            <p class="reviews__item-description">{{ review.description|truncatewords:40 }}</p>
+                            <p class="reviews__item-author">{{ review.author.username }}</p>
+                            <span class="reviews__item-date">{{ review.time_created|date:"Y.m.d" }}</span>
+                            <a class="reviews__item-link" href="{{ review.get_absolute_url }}">Read more</a>
+                        </div>
+                        <div class="reviews__item-right">
+                            {% if review.main_image %}
+                            <img class="reviews__item-image" src="{{ review.main_image.url }}" alt="{{ review.title }}">
+                            {% endif %}
+                        </div>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
