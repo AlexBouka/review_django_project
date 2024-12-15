@@ -10,14 +10,32 @@
 {% block content %}
 
 <section class="review">
-    <div class="container review__container">
+    <div class="container review__container flex">
         <div class="review__wrapper">
             <div class="review__title-wrapper">
                 <h2 class="review__title">{{ review.title }}</h2>
                 <div class="review__info-wrapper">
+                    {% if user.is_authenticated %}
+                    <div class="review__likes-wrapper flex">
+                        <form class="review__like-form" action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="review_id" value="{{ review.id }}">
+                            <button class="review__like-btn btn-reset" type="submit">
+                                {% if user in review.likes.all %}
+                                    <img src="{% static 'review/images/dislike.png' %}" alt="Unlike">
+                                {% else %}
+                                    <img src="{% static 'review/images/like.png' %}" alt="Like">
+                                {% endif %}
+                            </button>
+                        </form>
+                        <p class="review__likes-count">{{ review.total_likes }}</p>
+                    </div>
+                    {% else %}
+                    <p class="review__likes-count">Likes: {{ review.total_likes }}</p>
+                    {% endif %}
                     <p class="review__author">{{ review.author }}</p>
                     <span class="review__date">{{ review.time_created|date:"Y.m.d" }}</span>
-                    <a class="review__category" href="#">{{ review.category.name }}</a>
+                    <a class="review__category button" href="{{ review.category.get_absolute_url }}">{{ review.category.name }}</a>
                 </div>
             </div>
             <div class="review__descr-wrapper">
@@ -39,8 +57,8 @@
                         <h3 class="topic__title">{{ topic.review_topic_title }}</h3>
                         <p class="topic__content">{{ topic.text_content }}</p>
                         {% if request.user == review.author or request.user.is_superuser %}
-                        <a class="topic__edit" href="{% url 'review:update_review_topic' topic_slug=topic.slug %}">Edit topic</a>
-                        <a class="topic__delete" href="{% url 'review:delete_review_topic' topic_slug=topic.slug %}">Delete topic</a>
+                        <a class="topic__edit button" href="{% url 'review:update_review_topic' topic_slug=topic.slug %}">Edit topic</a>
+                        <a class="topic__delete button" href="{% url 'review:delete_review_topic' topic_slug=topic.slug %}">Delete topic</a>
                         {% endif %}
                     </li>
                     {% endfor %}
@@ -52,10 +70,54 @@
 
             {% if request.user == review.author or request.user.is_superuser %}
             <div class="review__actions-wrapper">
-                <a class="actions__edit" href="{% url 'review:review_update' review.slug %}">Edit {{ review.title }}</a>
-                <a class="actions__edit" href="{% url 'review:review_delete' review.slug %}">Delete {{ review.title }}</a>
+                <a class="actions__edit button" href="{% url 'review:review_update' review.slug %}">Edit {{ review.title }}</a>
+                <a class="actions__edit button" href="{% url 'review:review_delete' review.slug %}">Delete {{ review.title }}</a>
             </div>
             {% endif %}
+        </div>
+        <div class="review__comments-wrapper frame">
+            <div class="review__comments-title-wrapper flex">
+                <h3 class="review__comments-title">Comments</h3>
+                <p class="review__comments-count">{{ review.comments.count }}</p>
+            </div>
+            <div class="review__comments-list-wrapper">
+                {% if request.user.is_authenticated %}
+                <form method="post" action="" class="review__comment-form comment-form flex">
+                    {% csrf_token %}
+                    {{ comment_form.as_div }}
+                    <input class="comment-form__submit form__submit btn-reset" type="submit" value="Post">
+                </form>
+                {% else %}
+                <p class="review__comment-form-message">Please log in to post a comment</p>
+                <a href="{% url 'users:login' %}" class="review__comment-login-link">Login</a>
+                {% endif %}
+                {% if review.comments %}
+                <ul class="review__comments-list list-reset">
+                    {% for comment in review.comments.all %}
+                    <li class="review__comment comment comment-frame">
+                        <div class="comment__title-wrapper flex">
+                            <div class="comment__author-and-date-wrapper">
+                                <p class="comment__author">{{ comment.author.username }}</p>
+                                <span class="comment__date">{{ comment.time_created|date:"d.m.Y" }}</span>
+                            </div>
+                            {% if comment.author.profile.profile_photo %}
+                            <div class="comment__avatar-wrapper">
+                                <img class="comment__author-photo" src="{{ comment.author.profile.profile_photo.url }}" alt="{{ comment.author.username }}">
+                            </div>
+                            {% else %}
+                            <div class="comment__avatar-wrapper">
+                                <img class="comment__author-photo" src="{% static 'review/images/default.png' %}" alt="Default avatar">
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="comment__text-wrapper">
+                            <p class="comment__content">{{ comment.text }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
         </div>
     </div>
 </section>

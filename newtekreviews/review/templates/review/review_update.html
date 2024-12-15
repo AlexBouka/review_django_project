@@ -2,18 +2,26 @@
 
 {% block title %}Edit {{ review.title }}{% endblock %}
 
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'review/css/review-update.css' %}" />
+{% endblock %}
+
 {% block content %}
 
-<h1>Edit {{ review.title }}</h1>
+<section class="review-update__section">
+    <div class="container review-update__container">
+        <h1>Edit {{ review.title }}</h1>
 
-<form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token %} 
-    {{ form.as_p }}
-    {{ review_topic_formset.management_form }}
-    {% for form in review_topic_formset %}
-        {{ form.as_p }}
-    {% endfor %}
-    <input type="submit" value="Edit">
-</form>
-
+    <form class="review-update__form frame" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %} 
+        {{ form.as_div }}
+        {{ review_topic_formset.management_form }}
+        {% for form in review_topic_formset %}
+            {{ form.as_div }}
+        {% endfor %}
+        <input type="submit" value="Edit">
+    </form>
+    </div>
+</section>
 {% endblock %}

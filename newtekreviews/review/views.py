@@ -3,6 +3,7 @@ import logging
 from typing import Any
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import (
@@ -18,31 +19,32 @@ from .models import Review, ReviewTopic, Category
 from .forms import (
     AddReviewForm, ContactForm, AddCategoryForm,
     AddReviewTopicForm, EditReviewTopicForm,
-    ReviewTopicFormSet, UpdateReviewTopicFormSet)
+    ReviewTopicFormSet, UpdateReviewTopicFormSet,
+    CommentForm, LikeForm)
 from .filters import ReviewFilter, CategoryFilter
 
 logger = logging.getLogger(__name__)
 
 
-def index(request):
+def index(request) -> HttpResponse:
     return render(
         request, 'review/index.html'
         )
 
 
-def about(request):
+def about(request) -> HttpResponse:
     return render(
         request, 'review/about.html'
         )
 
 
-def contact(request):
+def contact(request) -> HttpResponse:
     return render(
         request, 'review/contact.html'
         )
 
 
-def search_reviews(request):
+def search_reviews(request) -> HttpResponse:
     if request.method == 'POST':
         searched = request.POST['searched']
         reviews = Review.published.filter(title__icontains=searched)
@@ -82,8 +84,7 @@ class ReviewListView(DataMixin, ListView):
         review_list = cache.get('all_reviews')
         if not review_list:
             review_list = Review.published.all().select_related(
-                'category').select_related(
-                    'author')
+                'category').select_related('author')
             cache.set('all_reviews', review_list, 60)
 
         self.filterset = ReviewFilter(self.request.GET, queryset=review_list)
@@ -94,46 +95,71 @@ class ReviewListView(DataMixin, ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
-        Retrieves the context data needed to render the review list page.
+        Updates the given context dictionary with mixin-specific data.
 
-        The context includes the count of all published reviews, the count of
-        filtered reviews, the ReviewFilter instance, and the filtered data.
+        This method adds the `reviews_count`, `filtered_reviews_count`, and
+        `filter` attributes to the provided context dictionary, as well as
+        updating the `info_heading` attribute based on the filter headings.
 
-        If the request contains GET parameters, it updates the info_heading
-        attribute of the view instance with the appropriate text.
+        Parameters:
+        - **kwargs (dict): The context dictionary to be updated.
 
         Returns:
-            dict[str, Any]: The context data needed to render the review list page.
+        dict: The updated context dictionary.
         """
         context = super().get_context_data(**kwargs)
         context['reviews_count'] = Review.published.count()
         context['filtered_reviews_count'] = len(self.filterset.qs)
         context['filter'] = self.filterset
 
-        filter_data = self.request.GET.dict()
-        context['filter_data'] = filter_data
+        headings = self.get_filter_headings()  # from DataMixin
+        self.info_heading = headings
+        context['info_heading'] = self.info_heading
 
-        info_parts = []
+        return context
 
-        if filter_data:
-            logger.info(f'Retrieving filtered reviews: {filter_data}')
 
-            page = filter_data.get('page')
-            title = filter_data.get('title', '')
-            description = filter_data.get('description', '')
-            time_created = filter_data.get('time_created', '')
+class ArchivedReviewListView(DataMixin, LoginRequiredMixin, ListView):
+    model = Review
+    info_heading = 'Archived reviews'
+    page_title = 'Archived Reviews'
+    context_object_name = 'reviews'
+    template_name = 'review/review_list.html'
+    paginate_by = 5
 
-            if page:
-                self.info_heading = f'All reviews {page} page'
-            if title:
-                info_parts.append(f"title: {title}")
-            if description:
-                info_parts.append(f"description containing: {description}")
-            if time_created:
-                info_parts.append(f"creation date: {time_created}")
+    def get_queryset(self):
+        review_list = cache.get('archived_reviews')
+        if not review_list:
+            review_list = Review.archived.all().select_related(
+                'category').select_related('author')
+            cache.set('archived_reviews', review_list, 60)
 
-        self.info_heading = 'Reviews by ' + ", ".join(info_parts) \
-            if info_parts else "All Reviews"
+        self.filterset = ReviewFilter(self.request.GET, queryset=review_list)
+
+        logger.info('Retrieving all archived reviews')
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Updates the given context dictionary with mixin-specific data.
+
+        This method adds the `reviews_count`, `filtered_reviews_count`, and
+        `filter` attributes to the provided context dictionary, as well as
+        updating the `info_heading` attribute based on the filter headings.
+
+        Parameters:
+        - **kwargs (dict): The context dictionary to be updated.
+
+        Returns:
+        dict: The updated context dictionary.
+        """
+        context = super().get_context_data(**kwargs)
+        context['reviews_count'] = Review.archived.count()
+        context['filtered_reviews_count'] = len(self.filterset.qs)
+        context['filter'] = self.filterset
+
+        headings = self.get_filter_headings(archived=True)  # from DataMixin
+        self.info_heading = headings
         context['info_heading'] = self.info_heading
 
         return context
@@ -149,6 +175,7 @@ class ReviewDetailView(DataMixin, DetailView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
         return self.get_mixin_context(
             context, page_title="NewTekReviews - " + context['review'].title)
 
@@ -158,9 +185,57 @@ class ReviewDetailView(DataMixin, DetailView):
                 Review, slug=self.kwargs[self.slug_url_kwarg]).title}'
             )
         return get_object_or_404(
-            Review.published.select_related('author')
+            Review.objects.prefetch_related(
+                'likes', 'comments')
+            .select_related('author')
             .select_related('category'),
             slug=self.kwargs[self.slug_url_kwarg])
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles a POST request to the review detail view.
+
+        If the request contains a `text` key in the POST data, it is
+        assumed to be a comment form submission. The form is validated
+        and, if valid, a new comment is created and associated with the
+        review.
+
+        If the request contains a `review_id` key in the POST data, it is
+        assumed to be a like or unlike action. The review is retrieved
+        and the user is either added or removed from the review's set of
+        likes.
+
+        If the form is invalid or the request is not recognised, the
+        user is redirected back to the review page with the invalid form
+        data.
+        """
+        self.object = self.get_object()
+
+        if 'text' in request.POST:
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                print('Form is valid')
+                comment = comment_form.save(commit=False)
+                comment.review = self.object
+                comment.author = request.user
+                comment.save()
+                print(f'Comment saved: {comment.text}')
+
+                return redirect('review:review', review_slug=self.object.slug)
+
+        elif 'review_id' in request.POST:
+            like_form = LikeForm(request.POST)
+            if like_form.is_valid():
+                review = get_object_or_404(
+                    Review, id=like_form.cleaned_data['review_id'])
+                if request.user in review.likes.all():
+                    review.likes.remove(request.user)
+                else:
+                    review.likes.add(request.user)
+                return redirect('review:review', review_slug=review.slug)
+
+        context = self.get_context_data(comment_form=comment_form)
+        return self.render_to_response(context)
 
 
 class ReviewCreateView(

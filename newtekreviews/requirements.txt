@@ -1,6 +1,7 @@
 asgiref==3.8.1
 asttokens==2.4.1
 attrs==24.2.0
+cachetools==5.5.0
 certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.4.0
@@ -23,6 +24,7 @@ djoser==2.2.3
 drf-spectacular==0.27.2
 executing==2.0.1
 Faker==12.0.1
+google-auth==2.36.0
 hiredis==3.0.0
 idna==3.10
 inflection==0.5.1
@@ -45,8 +47,11 @@ platformdirs==4.3.6
 pluggy==1.5.0
 prompt_toolkit==3.0.47
 psutil==6.0.0
+psycopg==3.2.3
 psycopg2==2.9.10
 pure-eval==0.2.2
+pyasn1==0.6.1
+pyasn1_modules==0.4.1
 pycparser==2.22
 Pygments==2.18.0
 PyJWT==2.9.0
@@ -62,6 +67,7 @@ referencing==0.35.1
 requests==2.32.3
 requests-oauthlib==2.0.0
 rpds-py==0.20.0
+rsa==4.9
 setuptools==71.0.3
 six==1.16.0
 social-auth-app-django==5.4.2

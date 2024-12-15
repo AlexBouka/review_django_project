@@ -13,8 +13,8 @@
     <div class="container categories__container">
         <h1 class="categories__title">{{ info_heading }}</h1>
         <form method="get" action="." class="categories__filter-form frame flex">
-            <input type="text" name="name" placeholder="Category name" class="filter-form__input" value="" />
-            <button type="submit" class="filter-form__submit btn-reset">Filter</button>
+            <input type="text" name="name" placeholder="Category name" class="filter-form__input filter-input" value="" />
+            <button type="submit" class="filter-form__submit filter-submit btn-reset">Filter</button>
         </form>
         <ul class="categories__list list-reset">
             {% for category in categories %}

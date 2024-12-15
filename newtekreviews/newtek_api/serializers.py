@@ -1,4 +1,6 @@
 import io
+
+from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
@@ -141,3 +143,11 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = [
             'slug'
         ]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username', 'first_name', 'last_name', 'email'
+            ]

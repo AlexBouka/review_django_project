@@ -36,6 +36,54 @@ class DataMixin:
         context.update(kwargs)
         return context
 
+    def get_filter_headings(self, archived=False) -> str:
+        """
+        Returns a string that describes the current filter applied to the
+        list view.
+
+        If a page number is provided in the query string, the method returns
+        a string of the form 'All reviews <page number> page' or 'Archived
+        reviews <page number> page', depending on whether the view is showing
+        archived or published reviews.
+
+        If a title, description, or creation date is provided in the query
+        string, the method returns a string describing the filter, for example
+        'Reviews by title: <title>, description containing: <description>, and
+        creation date: <date>'.
+
+        If none of the above criteria are met, the method returns 'All Reviews'
+        or 'Archived Reviews', depending on whether the view is showing
+        archived or published reviews.
+
+        :param archived: Whether the view is showing archived or published
+            reviews
+        :type archived: bool
+        :return: A string that describes the current filter
+        :rtype: str
+        """
+        filter_data = self.request.GET.dict()
+        page = filter_data.get("page", '')
+        title = filter_data.get("title", '')
+        description = filter_data.get("description", '')
+        time_created = filter_data.get("time_created", '')
+
+        info_parts = []
+
+        if page:
+            return f'{'All reviews' if not archived else 'Archived reviews'} {page} page'
+        if title:
+            info_parts.append(f'title: {title}')
+        if description:
+            info_parts.append(f'description containing: {description}')
+        if time_created:
+            info_parts.append(f'creation date: {time_created}')
+
+        list_type = 'Archived reviews by ' if archived else 'Reviews by '
+        list_title = 'All Reviews' if not archived else 'Archived Reviews'
+
+        return list_type + ", ".join(info_parts) \
+            if info_parts else list_title
+
 
 def update_slug(old, new) -> str:
     """
@@ -58,7 +106,8 @@ def update_slug(old, new) -> str:
             old.title != new.title:
         return slugify(new.title)
     elif isinstance(old, ReviewTopic) \
-            and old.review_topic_title != new.review_topic_title \
-            or old.review.title != new.review.title:
+            and old.review_topic_title != new.review_topic_title:
         return slugify(
             f"{new.review.title}-{new.review_topic_title}")
+
+    return old.slug

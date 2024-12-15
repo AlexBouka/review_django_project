@@ -3,7 +3,7 @@ from django.views.decorators.cache import cache_page
 
 from .views import (
     index, about, search_reviews,
-    ReviewListView,
+    ReviewListView, ArchivedReviewListView,
     ReviewDetailView, ReviewCreateView, ReviewUpdateView, ReviewDeleteView,
     ReviewTopicCreateView, ReviewTopicUpdateView, ReviewTopicDeleteView,
     CategoryListView, CategoryDetailView, CategoryCreateView,
@@ -24,6 +24,10 @@ urlpatterns = [
     path(
         'reviews/', ReviewListView.as_view(),
         name='all_reviews'
+        ),
+    path(
+        'archived_reviews/', ArchivedReviewListView.as_view(),
+        name='archived_reviews'
         ),
     path(
         'review/<slug:review_slug>/', ReviewDetailView.as_view(),

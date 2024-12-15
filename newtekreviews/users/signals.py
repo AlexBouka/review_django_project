@@ -16,4 +16,5 @@ def user_postsave(sender, instance, created, **kwargs):
         from_email = settings.EMAIL_HOST_USER
         to_email = instance.email
 
-        send_mail(subject, message, from_email, [to_email], fail_silently=False)
+        send_mail(
+            subject, message, from_email, [to_email], fail_silently=False)

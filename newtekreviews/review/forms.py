@@ -1,18 +1,23 @@
 from django import forms
 from captcha.fields import CaptchaField
 
-from .models import Review, ReviewTopic, Category
+from .models import Review, ReviewTopic, Category, Comment
 
 
 class InitForm(forms.Form):
     def __init__(self, *args, **kwargs):
         """
-        Initializes the form by setting all the field labels to empty strings.
-        This is needed to hide the labels in the registration form.
+        Initializes the form by setting all the field labels
+        (except `is_published` field) to empty strings.
+        This is needed to hide the labels in the form.
         """
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.label = ""
+            if field_name == 'is_published':
+                field.label = "Published"
+                field.required = False
+            else:
+                field.label = ""
 
 
 class AddReviewForm(InitForm, forms.ModelForm):
@@ -48,8 +53,7 @@ class AddReviewForm(InitForm, forms.ModelForm):
                 ),
             'is_published': forms.CheckboxInput(attrs={
                 'class': 'review-form__checkbox-input',
-                'label': 'Published'
-                    }
+                    },
                 ),
             'category': forms.Select(attrs={
                 'class': 'review-form__select-input'
@@ -104,6 +108,25 @@ ReviewTopicFormSet = forms.modelformset_factory(
 UpdateReviewTopicFormSet = forms.modelformset_factory(
     ReviewTopic, form=EditReviewTopicForm, extra=1, can_delete=True
 )
+
+
+class CommentForm(InitForm, forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'class': 'comment-form__text-input textarea-input',
+                    'placeholder': 'Your comment',
+                    'rows': 3, 'cols': 20
+                    }
+                ),
+        }
+
+
+class LikeForm(forms.Form):
+    review_id = forms.IntegerField(widget=forms.HiddenInput())
 
 
 class AddCategoryForm(forms.ModelForm):

@@ -23,15 +23,34 @@
     color: var(--main-text-color);
 }
 
-.reviews__add-link {
+.reviews__add-link, .reviews__archived-reviews-link {
     margin-right: 10px;
     padding: 5px 15px;
     border-radius: 5px;
-    background-color: #f06210;
-    color: white;
     font-size: 18px;
     font-weight: 400;
     cursor: pointer;
+}
+
+.reviews__archived-reviews-link {
+    background-color: #fff;
+    color: var(--main-color);
+    border: 2px solid var(--main-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.reviews__archived-reviews-link:hover {
+    background-color: var(--main-color);
+    color: #fff;
+}
+
+.reviews__archived-reviews-link:focus {
+    outline: 2px solid var(--orange);
+}
+
+.reviews__add-link {
+    background-color: #f06210;
+    color: white;
     transition: background-color 0.3s ease;
 }
 
@@ -121,10 +140,20 @@
     margin-bottom: 30px;
     padding: 20px;
     /* max-height: 300px; */
+    position: relative;
     background-color: #fff;
-    box-shadow: 5px 5px 5px 5px rgba(206, 206, 206, 0.35);
+    /* box-shadow: 5px 5px 5px 5px rgba(206, 206, 206, 0.35); */
     border-radius: 5px;
     transition: box-shadow 0.3s ease;
+}
+
+.reviews__item::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(to bottom right, #83b1cc, #fff, #fff, var(--orange));
+    filter: blur(5px);
+    z-index: -1;
 }
 
 .reviews__item:hover {

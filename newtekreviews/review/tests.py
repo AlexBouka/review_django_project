@@ -1,3 +1,4 @@
+import threading
 from django.test import TestCase
 from django.urls import reverse
 from http import HTTPStatus
@@ -6,8 +7,8 @@ from django.contrib.auth.models import Permission
 from django.utils.text import slugify
 from mixer.backend.django import mixer
 
-from .models import Review, ReviewTopic, Category
-from .forms import AddReviewForm, UpdateReviewTopicFormSet
+from .models import Review, ReviewTopic, Category, Comment
+from .forms import AddReviewForm, UpdateReviewTopicFormSet, CommentForm
 
 # Tests for the Review CRUD
 
@@ -50,8 +51,12 @@ class GetAllReviewsTestCase(TestCase):
 
 class GetReviewTestCase(TestCase):
     def setUp(self):
+        self.user = mixer.blend(get_user_model())
+        self.client.force_login(self.user)
         self.review = mixer.blend(
             Review, slug=slugify('Test Review'), is_published=True)
+        self.url = reverse(
+            'review:review', kwargs={'review_slug': self.review.slug})
 
     def test_get_review(self):
         path = reverse(
@@ -60,8 +65,51 @@ class GetReviewTestCase(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, 'review/review_detail.html')
 
+    def test_comment_posting(self):
+        """
+        Test that the 'review:review' URL allows users to post comments on the
+        review.
+        """
+        response = self.client.post(self.url, data={'text': 'Test comment'})
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertTrue(Comment.objects.filter(text='Test comment').exists())
+        self.assertRedirects(response, reverse(
+            'review:review', kwargs={'review_slug': self.review.slug}))
+
+    def test_like_review(self):
+        data = {'review_id': self.review.id}
+        response = self.client.post(self.url, data=data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response, reverse(
+                'review:review', kwargs={'review_slug': self.review.slug}))
+        self.assertTrue(self.user in self.review.likes.all())
+
+    def test_unlike_review(self):
+        self.review.likes.add(self.user)
+        data = {'review_id': self.review.id}
+        response = self.client.post(self.url, data=data)
+
+        self.assertRedirects(response, self.url)
+        # Refresh the review from the database
+        self.review.refresh_from_db()
+        # Check if the user is no longer in the review's likes
+        self.assertNotIn(self.user, self.review.likes.all())
+
+    def test_post_invalid_form_context(self):
+        invalid_data = {'text': ''}  # Invalid comment form data
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context['comment_form'], CommentForm)
+        self.assertFalse(response.context['comment_form'].is_valid())
+        self.assertTemplateUsed(response, 'review/review_detail.html')
+
     def tearDown(self) -> None:
-        pass
+        self.client.logout()
+        self.user.delete()
+        self.review.delete()
 
 
 class CreateReviewTestCase(TestCase):

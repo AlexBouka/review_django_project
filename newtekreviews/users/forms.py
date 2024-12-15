@@ -64,12 +64,12 @@ class UserRegistrationForm(UserCreationForm):
         }
 
     def __init__(self, *args, **kwargs):
-        """
-        Initializes the form by setting all the field labels to empty strings.
-        This is needed to hide the labels in the registration form.
-        """
+        """Sets the label of each form field to an empty string and sets
+        'first_name' and 'last_name' fields to be not required."""
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
+            if field_name == 'first_name' or field_name == 'last_name':
+                field.required = False
             field.label = ""
 
     def validate_email(self):
@@ -155,9 +155,9 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "bio": forms.Textarea(attrs={"class": "form-control"}),
-            "social_facebook": forms.TextInput(attrs={"class": "form-social"}),
-            "social_instagram": forms.TextInput(attrs={"class": "form-social"}),
-            "social_twitter": forms.TextInput(attrs={"class": "form-social"}),
-            "social_youtube": forms.TextInput(attrs={"class": "form-social"}),
-            "social_website": forms.TextInput(attrs={"class": "form-social"}),
+            "social_facebook": forms.URLInput(attrs={"class": "form-social"}),
+            "social_instagram": forms.URLInput(attrs={"class": "form-social"}),
+            "social_twitter": forms.URLInput(attrs={"class": "form-social"}),
+            "social_youtube": forms.URLInput(attrs={"class": "form-social"}),
+            "social_website": forms.URLInput(attrs={"class": "form-social"}),
         }

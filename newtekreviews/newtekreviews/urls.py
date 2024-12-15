@@ -33,6 +33,7 @@ urlpatterns = [
     path('', include('review.urls', namespace='review')),  # Review App urls
     path('auth/', include('users.urls', namespace='users')),  # Auth App urls
     path('api/v1/', include('newtek_api.urls', namespace='newtek_api')),  # NewTek API urls
+    path('api/v1/s-auth/', include('rest_framework.urls')),
     path('api/v1/auth/', include('djoser.urls')),
     path('api/v1/auth/', include('djoser.urls.authtoken')),
     path('__debug__/', include('debug_toolbar.urls')),

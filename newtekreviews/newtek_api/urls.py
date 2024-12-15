@@ -6,6 +6,7 @@ from .views import (
     ReviewTopicDetailAPIView,
     ReviewViewSet,
     CategoryViewSet,
+    CustomAuthTokenView,
 )
 
 app_name = 'newtek_api'
@@ -19,6 +20,8 @@ urlpatterns = [
     path('', include(router.urls)),
 
     path('review-topic/<slug:topic_slug>/', ReviewTopicDetailAPIView.as_view()),
+
+    path('token-auth/', CustomAuthTokenView.as_view(), name='custom_token_auth'),
 
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
 ]

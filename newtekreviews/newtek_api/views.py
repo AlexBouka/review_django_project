@@ -1,9 +1,12 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser)
 from rest_framework.authentication import (
     TokenAuthentication, SessionAuthentication)
 from django_filters import rest_framework as filters
@@ -16,7 +19,8 @@ from .paginators import ReviewAPIListPaginator
 from review.models import Review, ReviewTopic, Category
 from .serializers import (
     ReviewSerializer, ReviewTopicSerializer,
-    CategorySerializer
+    CategorySerializer,
+    UserSerializer
     )
 
 
@@ -106,3 +110,29 @@ class ReviewAPIView(APIView):
 
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomAuthTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            token, _ = Token.objects.get_or_create(
+                user=user
+            )
+
+            user_serializer = UserSerializer(user)
+            return Response({
+                'token': token.key,
+                'user': user_serializer.data,
+            })
+
+        return Response(
+            {'error': 'Invalid credentials'},
+            status=status.HTTP_401_UNAUTHORIZED
+            )

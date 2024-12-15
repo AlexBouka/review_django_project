@@ -12,16 +12,19 @@
     <div class="container reviews__container">
         <div class="reviews__title-wrapper flex">
             <h2 class="reviews__title">{{ info_heading }}</h2>
+            {% if request.user.is_staff %}
+            <a class="reviews__archived-reviews-link" href="{% url 'review:archived_reviews' %}">Archived Reviews</a>
             <a class="reviews__add-link" href="{% url 'review:review_create' %}">New review</a>
+            {% endif %}
             <p class="reviews__count">Total: {{ filtered_reviews_count }}</p>
         </div>
         <form method="get" action="." class="reviews__filter-form frame flex">
             <div class="filter-form__input-wrapper flex">
-                <input type="text" name="title" placeholder="Review title" class="filter-form__input filter-form__title" value="">
-                <input type="text" name="description" placeholder="Description" class="filter-form__input filter-form__description" value="">
-                <input type="date" name="time_created" class="filter-form__input filter-form__time_created" value="{{ filter.form.time_created.value }}" />
+                <input type="text" name="title" placeholder="Review title" class="filter-form__input filter-input" value="">
+                <input type="text" name="description" placeholder="Description" class="filter-form__input filter-input" value="">
+                <input type="date" name="time_created" class="filter-form__input filter-input" value="{{ filter.form.time_created.value }}" />
             </div>
-            <button type="submit" class="filter-form__submit btn-reset">Filter</button>
+            <button type="submit" class="filter-form__submit filter-submit btn-reset">Filter</button>
         </form>
         {% if reviews %}
         <ul class="reviews__list list-reset">

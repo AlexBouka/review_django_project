@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.utils.text import slugify
 from django.utils.crypto import get_random_string
-from review.models import Review, ReviewTopic, Category
+from .models import Review, ReviewTopic, Category
 
 
 class ReviewModelTest(TestCase):

@@ -26,7 +26,7 @@
 }
 
 .categories__filter-form input[type="text"]:focus {
-    outline: 2px solid #f06210;
+    outline: 2px solid var(--orange);
 }
 
 .filter-form__submit {
@@ -45,7 +45,7 @@
 }
 
 .filter-form__submit:focus {
-    outline: 2px solid #f06210;
+    outline: 2px solid var(--orange);
 }
 
 .categories__list {

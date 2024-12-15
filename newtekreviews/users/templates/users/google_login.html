@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<meta name="google-signin-client_id" content="676132462264-bpk62idrighe4me87hb3s8t6q7smhhc5.apps.googleusercontent.com">
+{% endblock extra_head %}
+
+<body>
+    <div id="my-signin"></div>
+
+    <script>
+        function onFailure(error) {
+            console.log(error);
+            alert(error.message);
+            // The user is not authenticated. Handle this appropriately.
+        }
+
+        function onSuccess(googleUser) {
+            let profile = googleUser.getBasicProfile()
+            console.log('Email: ' + profile.getEmail())
+            let token = googleUser.getAuthResponse().id_token
+            console.log('Token: ' + token)
+        }
+
+        function renderButton() {
+            gapi.signin2.render('my-signin'), {
+                scope: 'profile email',
+                width: 240,
+                height: 50,
+                longtitle: true,
+                theme: 'dark',
+                onsuccess: onSuccess,
+                onfailure: onFailure;
+                }
+            }
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</body>

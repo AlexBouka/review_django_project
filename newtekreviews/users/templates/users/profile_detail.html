@@ -28,17 +28,27 @@
                 <p>Email: {{ user.email }}</p>
             </div>
             <div class="profile__social-wrapper">
+                {% if profile.social_facebook%}
                 <a href="{{ profile.social_facebook }}" class="profile__social-link social_facebook">
                     Facebook</a>
+                {% endif %}
+                {% if profile.social_twitter %}
                 <a href="{{ profile.social_twitter }}" class="profile__social-link social_twitter">
                     Twitter</a>
+                {% endif %}
+                {% if profile.social_instagram %}
                 <a href="{{ profile.social_instagram }}" class="profile__social-link social_instagram">
                     Instagram</a>
+                {% endif %}
+                {% if profile.social_youtube %}
                 <a href="{{ profile.social_youtube }}" class="profile__social-link social_youtube">
                     YouTube</a>
+                {% endif %}
+                {% if profile.social_website %}
                 <a href="{{ profile.social_website }}" class="profile__social-link social_website">
                     Website
                 </a>
+                {% endif %}
             </div>
             {% if request.user == user %}
             <div class="profile__actions-wrapper flex">

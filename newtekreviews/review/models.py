@@ -5,6 +5,9 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.urls import reverse
 
+from .services import (
+    validate_image_size, get_path_for_uploading_review_main_image)
+
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -87,9 +90,12 @@ class Review(models.Model):
         verbose_name="Review Description", blank=True
     )
     main_image = models.ImageField(
-        upload_to='review_main_images/', default=None,
+        upload_to=get_path_for_uploading_review_main_image, default=None,
         blank=True, null=True,
-        verbose_name="Main Image"
+        verbose_name="Main Image",
+        validators=[
+            validate_image_size
+        ]
     )
     time_created = models.DateTimeField(
         auto_now_add=True, verbose_name="Created")
@@ -107,6 +113,8 @@ class Review(models.Model):
         'Category', on_delete=models.CASCADE,
         related_name='reviews', null=True, blank=True
         )
+    likes = models.ManyToManyField(
+        get_user_model(), blank=True, related_name='liked_reviews')
 
     objects = models.Manager()  # Review.objects.all()
     published = PublishedManager()  # Review.published.all()
@@ -119,6 +127,15 @@ class Review(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def total_likes(self):
+        """
+        Calculates the total number of likes for this review.
+
+        Returns:
+            int: The number of likes associated with this review.
+        """
+        return self.likes.count()
 
     def save(self, *args, **kwargs):
         """
@@ -213,6 +230,18 @@ class ReviewTopic(models.Model):
 
     def get_absolute_url(self):
         return reverse('review:topic', kwargs={'topic_slug': self.slug})
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE,
+        related_name='comments', null=True, blank=True
+        )
+    author = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name='comments',
+        null=True, blank=True)
+    text = models.TextField(verbose_name="Comment")
+    time_created = models.DateTimeField(auto_now_add=True)
 
 
 class Category(models.Model):

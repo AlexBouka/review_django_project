@@ -56,10 +56,12 @@ src: local('Muller-Bold'),
 :root {
     --main-color: rgb(1, 95, 158);
     --main-color-active: rgb(1, 65, 107);
+    --main-color-hover: rgb(50, 137, 196);
     --main-text-color: #121723;
     --grey-text: #918f8f;
     --text-input-on-hover: #e7ebf0;
     --form-input-border: #ccc;
+    --orange: #f06210;
 }
 
 body {
@@ -127,6 +129,10 @@ body:not(:-moz-handler-blocked) fieldset {
     border-radius: 5px;
 }
 
+.comment-frame {
+    box-shadow: 2px 2px 2px 2px rgba(206, 206, 206, 0.35);
+}
+
 .text-input {
     margin-bottom: 15px;
     padding: 8px 10px;
@@ -139,12 +145,77 @@ body:not(:-moz-handler-blocked) fieldset {
 }
 
 .textarea-input {
+    resize: none;
+    overflow: auto;
     margin-bottom: 15px;
     padding: 8px 10px;
     border-radius: 5px;
     border: 1px solid var(--form-input-border);
     font-size: 14px;
     color: var(--main-text-color);
+    transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+.textarea-input:hover, .text-input:hover {
+    border: 1px solid var(--main-color);
+    background-color: var(--text-input-on-hover);
+}
+
+.textarea-input:focus, .text-input:focus {
+    border: 1px solid var(--main-color);
+    outline: 2px solid var(--orange);
+}
+
+.filter-input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--form-input-border);
+    transition: border 0.3s ease background-color 0.3s ease;
+}
+
+.filter-input:hover {
+    border: 1px solid var(--main-color);
+    background-color: var(--text-input-on-hover);
+}
+
+.filter-input:focus {
+    border: 1px solid var(--main-color);
+    outline: 2px solid var(--orange);
+}
+
+.filter-submit {
+    padding: 5px 20px;
+    border-radius: 3px;
+    background-color: #fff;
+    color: var(--main-color);
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-submit:hover {
+    background-color: var(--text-input-on-hover);
+}
+
+.filter-submit:focus {
+    outline: 2px solid var(--orange);
+}
+
+.button {
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: var(--main-color-hover);
+}
+
+.button:focus {
+    outline: 2px solid var(--orange);
+}
+
+.button:active {
+    background-color: var(--main-color-active);
 }
 
 /* HEADER */
